@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import LaptopDatails from "../LaptopDatails/LaptopDatails";
+
 import GoBack from "../../images/go-back.png";
 import GelIcon from "../../images/gel-icon.png";
 
@@ -34,6 +36,8 @@ export default function EmployeeInformation() {
       localStorage.getItem("name").length < 2 ||
       localStorage.getItem("lastName") === "" ||
       localStorage.getItem("lastName").length < 2 ||
+      localStorage.getItem("direction") === null ||
+      localStorage.getItem("position") === null ||
       localStorage.getItem("email") === "" ||
       localStorage.getItem("number") === ""
     )
@@ -45,6 +49,17 @@ export default function EmployeeInformation() {
     if (!localStorage.getItem("number").startsWith(georgianPhoneNumCode)) {
       return;
     }
+
+    const employee = {
+      name: localStorage.getItem("name"),
+      lastName: localStorage.getItem("lastName"),
+      direction: localStorage.getItem("direction"),
+      position: localStorage.getItem("position"),
+      email: localStorage.getItem("email"),
+      number: localStorage.getItem("number"),
+    };
+
+    localStorage.setItem("employee", JSON.stringify(employee));
 
     setNextSection(true);
   };
@@ -103,7 +118,9 @@ export default function EmployeeInformation() {
                   setDirection(e.target.value);
                 }}
               >
-                <option value="თიმი">თიმი</option>
+                <option value="თიმი" hidden>
+                  თიმი
+                </option>
                 <option value="დეველოპმენტი">დეველოპმენტი</option>
                 <option value="HR">HR</option>
                 <option value="გაყიდვები">გაყიდვები</option>
@@ -119,7 +136,10 @@ export default function EmployeeInformation() {
                   setPosition(e.target.value);
                 }}
               >
-                <option value="პოზიცია">პოზიცია</option>
+                <option value="პოზიცია" hidden>
+                  პოზიცია
+                </option>
+                <option value="ილუსტრატორი">ილუსტრატორი</option>
               </select>
             </div>
             <div className="EmployeeInformation-content-inner-mail">
@@ -157,93 +177,7 @@ export default function EmployeeInformation() {
           </form>
         </div>
       ) : (
-        <div className="EmployeeInformation-laptop-details">
-          <form className="EmployeeInformation-laptop-details-inner">
-            <div className="EmployeeInformation-laptop-details-inner-img-upload-section">
-              <span>ჩააგდე ან ატვირთე ლეპტოპის ფოტო</span>
-              <button>ატვირთე </button>
-            </div>
-            <div className="EmployeeInformation-laptop-details-inner-laptop-name">
-              <div className="EmployeeInformation-laptop-details-inner-laptop-name-input">
-                <label htmlFor="laptop-name">ლეპტოპის სახელი</label>
-                <input id="laptop-name" type="text" />
-                <span>ლათინური ასოები, ციფრები, !@#$%^&*()_+= </span>
-              </div>
-              <select>
-                <option value="ლეპტოპის ბრენდი">ლეპტოპის ბრენდი</option>
-              </select>
-            </div>
-            <div className="EmployeeInformation-laptop-details-inner-laptop-details">
-              <div className="EmployeeInformation-laptop-details-inner-laptop-details-about-cpu">
-                <select>
-                  <option value="CPU">CPU</option>
-                </select>
-                <div className="EmployeeInformation-laptop-details-inner-laptop-details-about-cpu-core">
-                  <label htmlFor="core">CPU-ს ბირთვი</label>
-                  <input id="core" type="number" />
-                  <span>მხოლოდ ციფრები</span>
-                </div>
-                <div className="EmployeeInformation-laptop-details-inner-laptop-details-about-cpu-stream">
-                  <label htmlFor="stream">CPU-ს ნაკადი</label>
-                  <input id="stream" type="number" />
-                  <span>მხოლოდ ციფრები</span>
-                </div>
-              </div>
-              <div className="EmployeeInformation-laptop-details-inner-laptop-details-about-memory">
-                <div className="EmployeeInformation-laptop-details-inner-laptop-details-about-memory-input">
-                  <label htmlFor="ram">ლეპტოპის RAM (GB)</label>
-                  <input id="ram" type="number" />
-                  <span>მხოლოდ ციფრები</span>
-                </div>
-                <div className="EmployeeInformation-laptop-details-inner-laptop-details-about-memory-type">
-                  <label>მეხსიერების ტიპი</label>
-                  <div className="EmployeeInformation-laptop-details-inner-laptop-details-about-memory-type-radios">
-                    <div>
-                      <input name="memory-type" id="ssd" type="radio" />
-                      <label htmlFor="ssd">SSD</label>
-                    </div>
-                    <div>
-                      <input name="memory-type" id="hdd" type="radio" />
-                      <label htmlFor="hdd">HDD</label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="EmployeeInformation-laptop-details-inner-laptop-price">
-              <div className="EmployeeInformation-laptop-details-inner-laptop-price-date">
-                <label htmlFor="date">შეძენის რიცხვი (არჩევითი)</label>
-                <div>
-                  <input id="date" type="text" placeholder="დდ/თთ/წწწწ" />
-                </div>
-              </div>
-              <div className="EmployeeInformation-laptop-details-inner-laptop-price-laptop-price">
-                <label htmlFor="price">ლეპტოპის ფასი</label>
-                <div>
-                  <input id="price" type="number" placeholder="0000" />
-                </div>
-                <span>მხოლოდ ციფრები</span>
-              </div>
-            </div>
-            <div className="EmployeeInformation-laptop-details-inner-brand-new-or-not">
-              <label>ლეპტოპის მდგომარეობა</label>
-              <div className="EmployeeInformation-laptop-details-inner-brand-new-or-not-radios">
-                <div>
-                  <input name="new-or-not" id="brand-new" type="radio" />
-                  <label htmlFor="brand-new">ახალი</label>
-                </div>
-                <div>
-                  <input name="new-or-not" id="secondary" type="radio" />
-                  <label htmlFor="secondary">მეორადი</label>
-                </div>
-              </div>
-            </div>
-            <div className="EmployeeInformation-laptop-details-inner-buttons">
-              <a onClick={() => setNextSection(false)}>უკან</a>
-              <button>დამახსოვრება</button>
-            </div>
-          </form>
-        </div>
+        <LaptopDatails setNextSection={setNextSection} />
       )}
       <img
         onClick={() => goBack()}
