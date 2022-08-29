@@ -1,25 +1,88 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
+
+import PopUp from "../PopUp/PopUp";
 
 import "./LaptopDatails.scss";
 
 export default function LaptopDatails({ setNextSection }) {
   const [uploaded, setUploaded] = useState(false);
-  const [base64Format, setBase64Format] = useState("")
+  const [uploadError, setUploadError] = useState(false);
+  const [base64Format, setBase64Format] = useState("");
+  const [showPopUp, setShowPopUp] = useState(false);
+
+  const [laptopName, setLaptopName] = useState("");
+  const [laptopBrand, setLaptopBrand] = useState("");
+  const [cpu, setCpu] = useState("");
+  const [cpuCore, setCpuCore] = useState("");
+  const [cpuStream, setCpuStream] = useState("");
+  const [laptopRam, setLaptopRam] = useState("");
+  const [memoryType, setMemoryType] = useState("");
+  const [date, setDate] = useState("");
+  const [price, setPrice] = useState("");
+  const [laptopSituation, setLaptopSituation] = useState("");
+
+  const inputRef = useRef();
+  const laptopNameValidationRef = useRef();
+  const dateValidationRef = useRef();
 
   const submitLaptopDetailSection = (e) => {
     e.preventDefault();
+
+    if (!base64Format) {
+      setUploadError(true);
+      return;
+    }
+
+    if (
+      !localStorage.getItem("laptopName") ||
+      !localStorage.getItem("laptopBrand") ||
+      !localStorage.getItem("cpu") ||
+      !localStorage.getItem("cpuCore") ||
+      !localStorage.getItem("cpuStream") ||
+      !localStorage.getItem("laptopRam") ||
+      !localStorage.getItem("memoryType") ||
+      !localStorage.getItem("price") ||
+      !localStorage.getItem("laptopSituation")
+    ) {
+      return;
+    }
+
+    if (
+      !/^[a-zA-Z+ ]+$/.test(laptopName || localStorage.getItem("laptopName"))
+    ) {
+      return;
+    }
+
+    if (!/^[0-9+/]*$/.test(date)) {
+      return;
+    }
+
+    const laptopDetails = {
+      laptopName: localStorage.getItem("laptopName"),
+      laptopBrand: localStorage.getItem("laptopBrand"),
+      cpu: localStorage.getItem("cpu"),
+      cpuCore: localStorage.getItem("cpuCore"),
+      cpuStream: localStorage.getItem("cpuStream"),
+      laptopRam: localStorage.getItem("laptopRam"),
+      memoryType: localStorage.getItem("memoryType"),
+      date: localStorage.getItem("date") || "",
+      price: localStorage.getItem("price"),
+      laptopSituation: localStorage.getItem("laptopSituation")
+    }
+
+    localStorage.setItem("laptopDetails", JSON.stringify(laptopDetails))
+
+    setShowPopUp(true);
   };
 
   const uploadImage = (e) => {
     const reader = new FileReader();
-    reader.readAsDataURL(e.target.files[0])
-    reader.onload = function() {
-        setBase64Format(reader.result)
-    }
-
-    setUploaded(true);
+    reader.readAsDataURL(e.target.files[0]);
+    reader.onload = function () {
+      setBase64Format(reader.result);
+      setUploaded(true);
+    };
   };
-
 
   return (
     <div className="EmployeeInformation-laptop-details">
@@ -27,67 +90,188 @@ export default function LaptopDatails({ setNextSection }) {
         onSubmit={(e) => submitLaptopDetailSection(e)}
         className="EmployeeInformation-laptop-details-inner"
       >
-        <div
-          className={
-            uploaded
-              ? "EmployeeInformation-laptop-details-inner-img-upload-section success"
-              : "EmployeeInformation-laptop-details-inner-img-upload-section"
-          }
-        >
-          <input onChange={(e) => uploadImage(e)} id="upload-image" type="file" />
-          <span style={{ color: uploaded ? "rgb(53, 168, 53)" : "black" }}>
-            ჩააგდე ან ატვირთე ლეპტოპის ფოტო
-          </span>
-          <label
-            style={{
-              backgroundColor: uploaded ? "rgb(53, 168, 53)" : "#62a1eb",
-            }}
-            htmlFor="upload-image"
+        {!uploadError ? (
+          <div
+            className={
+              uploaded
+                ? "EmployeeInformation-laptop-details-inner-img-upload-section success"
+                : "EmployeeInformation-laptop-details-inner-img-upload-section"
+            }
           >
-            {!uploaded ? "ატვირთე" : "ატვირთულია"}
-          </label>
-        </div>
+            <input
+              ref={inputRef}
+              onChange={(e) => uploadImage(e)}
+              id="upload-image"
+              type="file"
+            />
+            <span style={{ color: uploaded ? "rgb(53, 168, 53)" : "#62a1eb" }}>
+              ჩააგდე ან ატვირთე ლეპტოპის ფოტო
+            </span>
+            <label
+              style={{
+                backgroundColor: uploaded ? "rgb(53, 168, 53)" : "#62a1eb",
+              }}
+              htmlFor="upload-image"
+            >
+              {!uploaded ? "ატვირთე" : "ატვირთულია"}
+            </label>
+          </div>
+        ) : (
+          <div
+            className={
+              uploaded
+                ? "EmployeeInformation-laptop-details-inner-img-upload-section success"
+                : "EmployeeInformation-laptop-details-inner-img-upload-section error"
+            }
+          >
+            <input
+              ref={inputRef}
+              onChange={(e) => uploadImage(e)}
+              id="upload-image"
+              type="file"
+            />
+            <span style={{ color: uploaded ? "rgb(53, 168, 53)" : "#E52F2F" }}>
+              ჩააგდე ან ატვირთე ლეპტოპის ფოტო
+            </span>
+            <label
+              style={{
+                backgroundColor: uploaded ? "rgb(53, 168, 53)" : "#E52F2F",
+              }}
+              htmlFor="upload-image"
+            >
+              {!uploaded ? "ატვირთე" : "ატვირთულია"}
+            </label>
+          </div>
+        )}
         <div className="EmployeeInformation-laptop-details-inner-laptop-name">
           <div className="EmployeeInformation-laptop-details-inner-laptop-name-input">
             <label htmlFor="laptop-name">ლეპტოპის სახელი</label>
-            <input id="laptop-name" type="text" />
-            <span>ლათინური ასოები, ციფრები, !@#$%^&*()_+= </span>
+            <input
+              id="laptop-name"
+              type="text"
+              value={localStorage.getItem("laptopName") || laptopName}
+              onChange={(e) => {
+                let inp = e.target.value;
+                if (!/^[a-zA-Z+ ]+$/.test(inp) && inp !== "") {
+                  laptopNameValidationRef.current.style.color = "red";
+                } else {
+                  laptopNameValidationRef.current.style.color = "black";
+                }
+                localStorage.setItem("laptopName", inp);
+                setLaptopName(inp);
+              }}
+            />
+            <span ref={laptopNameValidationRef}>
+              ლათინური ასოები, ციფრები, !@#$%^&*()_+={" "}
+            </span>
           </div>
-          <select>
-            <option value="ლეპტოპის ბრენდი">ლეპტოპის ბრენდი</option>
+          <select
+            value={localStorage.getItem("laptopBrand") || laptopBrand}
+            onChange={(e) => {
+              let inp = e.target.value;
+              localStorage.setItem("laptopBrand", inp);
+              setLaptopBrand(inp);
+            }}
+          >
+            <option value="ლეპტოპის ბრენდი" hidden>
+              ლეპტოპის ბრენდი
+            </option>
+            <option value="HP">HP</option>
+            <option value="ACER">ACER</option>
+            <option value="LENOVO">LENOVO</option>
+            <option value="MSI">MSI</option>
           </select>
         </div>
         <div className="EmployeeInformation-laptop-details-inner-laptop-details">
           <div className="EmployeeInformation-laptop-details-inner-laptop-details-about-cpu">
-            <select>
-              <option value="CPU">CPU</option>
+            <select
+              value={localStorage.getItem("cpu") || cpu}
+              onChange={(e) => {
+                let inp = e.target.value;
+                localStorage.setItem("cpu", inp);
+                setCpu(inp);
+              }}
+            >
+              <option value="CPU" hidden>
+                CPU
+              </option>
+              <option value="Intel Core i5">Intel Core i5</option>
+              <option value="Intel Core i7">Intel Core i7</option>
+              <option value="AMD Ryzen 7">AMD Ryzen 7</option>
             </select>
             <div className="EmployeeInformation-laptop-details-inner-laptop-details-about-cpu-core">
               <label htmlFor="core">CPU-ს ბირთვი</label>
-              <input id="core" type="number" />
+              <input
+                value={localStorage.getItem("cpuCore") || cpuCore}
+                onChange={(e) => {
+                  let inp = e.target.value;
+                  localStorage.setItem("cpuCore", inp);
+                  setCpuCore(inp);
+                }}
+                id="core"
+                type="number"
+              />
               <span>მხოლოდ ციფრები</span>
             </div>
             <div className="EmployeeInformation-laptop-details-inner-laptop-details-about-cpu-stream">
               <label htmlFor="stream">CPU-ს ნაკადი</label>
-              <input id="stream" type="number" />
+              <input
+                value={localStorage.getItem("cpuStream") || cpuStream}
+                onChange={(e) => {
+                  let inp = e.target.value;
+                  localStorage.setItem("cpuStream", inp);
+                  setCpuStream(inp);
+                }}
+                id="stream"
+                type="number"
+              />
               <span>მხოლოდ ციფრები</span>
             </div>
           </div>
           <div className="EmployeeInformation-laptop-details-inner-laptop-details-about-memory">
             <div className="EmployeeInformation-laptop-details-inner-laptop-details-about-memory-input">
               <label htmlFor="ram">ლეპტოპის RAM (GB)</label>
-              <input id="ram" type="number" />
+              <input
+                value={localStorage.getItem("laptopRam") || laptopRam}
+                onChange={(e) => {
+                  let inp = e.target.value;
+                  localStorage.setItem("laptopRam", inp);
+                  setLaptopRam(inp);
+                }}
+                id="ram"
+                type="number"
+              />
               <span>მხოლოდ ციფრები</span>
             </div>
             <div className="EmployeeInformation-laptop-details-inner-laptop-details-about-memory-type">
               <label>მეხსიერების ტიპი</label>
               <div className="EmployeeInformation-laptop-details-inner-laptop-details-about-memory-type-radios">
                 <div>
-                  <input name="memory-type" id="ssd" type="radio" />
+                  <input
+                    value="ssd"
+                    onChange={(e) => {
+                      localStorage.setItem("memoryType", e.target.value);
+                      setMemoryType(e.target.value);
+                    }}
+                    name="memory-type"
+                    id="ssd"
+                    type="radio"
+                    checked={localStorage.getItem("memoryType") === "ssd"}
+                  />
                   <label htmlFor="ssd">SSD</label>
                 </div>
                 <div>
-                  <input name="memory-type" id="hdd" type="radio" />
+                  <input
+                    value="hdd"
+                    onChange={(e) => {
+                      localStorage.setItem("memoryType", e.target.value);
+                      setMemoryType(e.target.value);
+                    }}
+                    name="memory-type"
+                    id="hdd"
+                    type="radio"
+                    checked={localStorage.getItem("memoryType") === "hdd"}
+                  />
                   <label htmlFor="hdd">HDD</label>
                 </div>
               </div>
@@ -98,13 +282,40 @@ export default function LaptopDatails({ setNextSection }) {
           <div className="EmployeeInformation-laptop-details-inner-laptop-price-date">
             <label htmlFor="date">შეძენის რიცხვი (არჩევითი)</label>
             <div>
-              <input id="date" type="text" placeholder="დდ/თთ/წწწწ" />
+              <input
+                value={localStorage.getItem("date") || date}
+                onChange={(e) => {
+                  let inp = e.target.value;
+                  if (!/^[0-9+/]*$/.test(inp) && inp !== "") {
+                    dateValidationRef.current.style.border = "1.8px solid red";
+                  } else {
+                    dateValidationRef.current.style.border =
+                      "1.8px solid #8ac0e2";
+                  }
+                  localStorage.setItem("date", inp);
+                  setDate(inp);
+                }}
+                id="date"
+                type="text"
+                placeholder="დდ/თთ/წწწწ"
+                ref={dateValidationRef}
+              />
             </div>
           </div>
           <div className="EmployeeInformation-laptop-details-inner-laptop-price-laptop-price">
             <label htmlFor="price">ლეპტოპის ფასი</label>
             <div>
-              <input id="price" type="number" placeholder="0000" />
+              <input
+                value={localStorage.getItem("price") || price}
+                onChange={(e) => {
+                  let inp = e.target.value;
+                  localStorage.setItem("price", inp);
+                  setPrice(inp);
+                }}
+                id="price"
+                type="number"
+                placeholder="0000"
+              />
             </div>
             <span>მხოლოდ ციფრები</span>
           </div>
@@ -113,11 +324,33 @@ export default function LaptopDatails({ setNextSection }) {
           <label>ლეპტოპის მდგომარეობა</label>
           <div className="EmployeeInformation-laptop-details-inner-brand-new-or-not-radios">
             <div>
-              <input name="new-or-not" id="brand-new" type="radio" />
+              <input
+                value="new"
+                onChange={(e) => {
+                  localStorage.setItem("laptopSituation", e.target.value);
+                  setLaptopSituation(e.target.value);
+                }}
+                name="new-or-not"
+                id="brand-new"
+                type="radio"
+                checked={localStorage.getItem("laptopSituation") === "new"}
+              />
               <label htmlFor="brand-new">ახალი</label>
             </div>
             <div>
-              <input name="new-or-not" id="secondary" type="radio" />
+              <input
+                value="secondary"
+                onChange={(e) => {
+                  localStorage.setItem("laptopSituation", e.target.value);
+                  setLaptopSituation(e.target.value);
+                }}
+                name="new-or-not"
+                id="secondary"
+                type="radio"
+                checked={
+                  localStorage.getItem("laptopSituation") === "secondary"
+                }
+              />
               <label htmlFor="secondary">მეორადი</label>
             </div>
           </div>
@@ -127,6 +360,7 @@ export default function LaptopDatails({ setNextSection }) {
           <button>დამახსოვრება</button>
         </div>
       </form>
+      {showPopUp && <PopUp />}
     </div>
   );
 }

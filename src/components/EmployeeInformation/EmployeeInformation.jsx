@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import LaptopDatails from "../LaptopDatails/LaptopDatails";
 
 import GoBack from "../../images/go-back.png";
-import GelIcon from "../../images/gel-icon.png";
 
 import "./EmployeeInformation.scss";
 

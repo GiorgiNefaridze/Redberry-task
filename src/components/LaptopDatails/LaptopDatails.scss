@@ -29,7 +29,7 @@
                 border: 2px dashed red;
             }
 
-            &.success{
+            &.success {
                 border: 2px dashed rgb(53, 168, 53);
 
             }
@@ -49,8 +49,8 @@
                 }
             }
 
-            input{
-                display:none;
+            input {
+                display: none;
             }
 
             label {
@@ -63,7 +63,7 @@
                 color: white;
                 font-weight: 500;
                 font-size: 18px;
-                display:flex;
+                display: flex;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
@@ -318,19 +318,21 @@
             align-items: flex-start;
             gap: 12px 0;
 
+            label {
+                font-size: 18px;
+                font-weight: 700;
+            }
+
             &-radios {
                 display: flex;
                 gap: 0 20px;
-
-                label {
-                    font-size: 18px;
-                    font-weight: 700;
-                }
 
                 div {
                     display: flex;
                     align-items: center;
                     gap: 0 12px;
+
+
                 }
             }
         }
