@@ -1,17 +1,23 @@
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
+import { RedberryApi } from "../../api/RedberryApi";
 
+import UploadImgMobile from "../../images/upld-img-mobile.png";
+import WarningError from "../../images/error-mob.png";
 import PopUp from "../PopUp/PopUp";
 
 import "./LaptopDatails.scss";
 
 export default function LaptopDatails({ setNextSection }) {
+  const [allBrands, setAllBrands] = useState([]);
+  const [allCpus, setAllCpus] = useState([]);
+
   const [uploaded, setUploaded] = useState(false);
   const [uploadError, setUploadError] = useState(false);
   const [base64Format, setBase64Format] = useState("");
   const [showPopUp, setShowPopUp] = useState(false);
 
   const [laptopName, setLaptopName] = useState("");
-  const [laptopBrand, setLaptopBrand] = useState("");
+  const [laptopBrand, setLaptopBrand] = useState({});
   const [cpu, setCpu] = useState("");
   const [cpuCore, setCpuCore] = useState("");
   const [cpuStream, setCpuStream] = useState("");
@@ -24,8 +30,28 @@ export default function LaptopDatails({ setNextSection }) {
   const inputRef = useRef();
   const laptopNameValidationRef = useRef();
   const dateValidationRef = useRef();
+  const formRef = useRef();
 
-  const submitLaptopDetailSection = (e) => {
+  useEffect(() => {
+    getBrands();
+    getCpus();
+  }, []);
+
+  const getBrands = async () => {
+    const { data } = await RedberryApi.get("/brands").catch((err) =>
+      console.log(err)
+    );
+    setAllBrands(data.data);
+  };
+
+  const getCpus = async () => {
+    const { data } = await RedberryApi.get("cpus").catch((err) =>
+      console.log(err)
+    );
+    setAllCpus(data.data);
+  };
+
+  const submitLaptopDetailSection = async (e) => {
     e.preventDefault();
 
     if (!base64Format) {
@@ -48,7 +74,9 @@ export default function LaptopDatails({ setNextSection }) {
     }
 
     if (
-      !/^[a-zA-Z+ ]+$/.test(laptopName || localStorage.getItem("laptopName"))
+      !/^[a-zA-Z+0-9!@#$%^&*()_+=]+$/.test(
+        laptopName || localStorage.getItem("laptopName")
+      )
     ) {
       return;
     }
@@ -57,20 +85,33 @@ export default function LaptopDatails({ setNextSection }) {
       return;
     }
 
-    const laptopDetails = {
-      laptopName: localStorage.getItem("laptopName"),
-      laptopBrand: localStorage.getItem("laptopBrand"),
-      cpu: localStorage.getItem("cpu"),
-      cpuCore: localStorage.getItem("cpuCore"),
-      cpuStream: localStorage.getItem("cpuStream"),
-      laptopRam: localStorage.getItem("laptopRam"),
-      memoryType: localStorage.getItem("memoryType"),
-      date: localStorage.getItem("date") || "",
-      price: localStorage.getItem("price"),
-      laptopSituation: localStorage.getItem("laptopSituation")
-    }
+    const employeeSet = {
+      name: localStorage.getItem("name"),
+      surname: localStorage.getItem("lastName"),
+      team_id: JSON.parse(localStorage.getItem("direction")).id,
+      position_id: JSON.parse(localStorage.getItem("position")).id,
+      phone_number: localStorage.getItem("number"),
+      email: localStorage.getItem("email"),
+      token: "56894b83e0d3b7a61ffc0e261560a53e",
 
-    localStorage.setItem("laptopDetails", JSON.stringify(laptopDetails))
+      laptop_name: localStorage.getItem("laptopName"),
+      laptop_image: base64Format,
+      laptop_brand_id: JSON.parse(localStorage.getItem("laptopBrand")).id,
+      laptop_cpu: localStorage.getItem("cpu"),
+      laptop_cpu_cores: Number(localStorage.getItem("cpuCore")),
+      laptop_cpu_threads: Number(localStorage.getItem("cpuStream")),
+      laptop_ram: Number(localStorage.getItem("laptopRam")),
+      laptop_hard_drive_type: localStorage.getItem("memoryType"),
+      laptop_state: localStorage.getItem("laptopSituation"),
+      laptop_purchase_date: Number(localStorage.getItem("date")) || "",
+      laptop_price: Number(localStorage.getItem("price")),
+    };
+
+    console.log(employeeSet);
+
+    const response = await RedberryApi.post("/laptop/create", employeeSet);
+
+    console.log(response);
 
     setShowPopUp(true);
   };
@@ -78,10 +119,13 @@ export default function LaptopDatails({ setNextSection }) {
   const uploadImage = (e) => {
     const reader = new FileReader();
     reader.readAsDataURL(e.target.files[0]);
-    reader.onload = function () {
-      setBase64Format(reader.result);
-      setUploaded(true);
-    };
+    console.log(e.target.files[0].name);
+    setBase64Format(e.target.files[0].name);
+    // reader.onload = function (e) {
+    //   setBase64Format(reader.result);
+    //   setUploaded(true);
+    // };
+    setUploaded(true);
   };
 
   return (
@@ -89,6 +133,7 @@ export default function LaptopDatails({ setNextSection }) {
       <form
         onSubmit={(e) => submitLaptopDetailSection(e)}
         className="EmployeeInformation-laptop-details-inner"
+        ref={formRef}
       >
         {!uploadError ? (
           <div
@@ -103,9 +148,16 @@ export default function LaptopDatails({ setNextSection }) {
               onChange={(e) => uploadImage(e)}
               id="upload-image"
               type="file"
+              name="myfile"
             />
             <span style={{ color: uploaded ? "rgb(53, 168, 53)" : "#62a1eb" }}>
               ჩააგდე ან ატვირთე ლეპტოპის ფოტო
+            </span>
+            <span
+              className="upload-image-mobile"
+              style={{ color: uploaded ? "rgb(53, 168, 53)" : "#62a1eb" }}
+            >
+              ლეპტოპის ფოტოს ატვირთვა
             </span>
             <label
               style={{
@@ -114,6 +166,9 @@ export default function LaptopDatails({ setNextSection }) {
               htmlFor="upload-image"
             >
               {!uploaded ? "ატვირთე" : "ატვირთულია"}
+            </label>
+            <label className="upload-image-mob" htmlFor="upload-image">
+              <img src={UploadImgMobile} alt="upload-button" />
             </label>
           </div>
         ) : (
@@ -124,6 +179,7 @@ export default function LaptopDatails({ setNextSection }) {
                 : "EmployeeInformation-laptop-details-inner-img-upload-section error"
             }
           >
+            {!uploaded && <img src={WarningError} alt="warning icon" />}
             <input
               ref={inputRef}
               onChange={(e) => uploadImage(e)}
@@ -133,6 +189,12 @@ export default function LaptopDatails({ setNextSection }) {
             <span style={{ color: uploaded ? "rgb(53, 168, 53)" : "#E52F2F" }}>
               ჩააგდე ან ატვირთე ლეპტოპის ფოტო
             </span>
+            <span
+              className="upload-image-mobile"
+              style={{ color: uploaded ? "rgb(53, 168, 53)" : "red" }}
+            >
+              ლეპტოპის ფოტოს ატვირთვა
+            </span>
             <label
               style={{
                 backgroundColor: uploaded ? "rgb(53, 168, 53)" : "#E52F2F",
@@ -140,6 +202,9 @@ export default function LaptopDatails({ setNextSection }) {
               htmlFor="upload-image"
             >
               {!uploaded ? "ატვირთე" : "ატვირთულია"}
+            </label>
+            <label className="upload-image-mob" htmlFor="upload-image">
+              <img src={UploadImgMobile} alt="upload" />
             </label>
           </div>
         )}
@@ -152,7 +217,7 @@ export default function LaptopDatails({ setNextSection }) {
               value={localStorage.getItem("laptopName") || laptopName}
               onChange={(e) => {
                 let inp = e.target.value;
-                if (!/^[a-zA-Z+ ]+$/.test(inp) && inp !== "") {
+                if (!/^[a-zA-Z+0-9!@#$%^&*()_+= ]+$/.test(inp) && inp !== "") {
                   laptopNameValidationRef.current.style.color = "red";
                 } else {
                   laptopNameValidationRef.current.style.color = "black";
@@ -166,20 +231,25 @@ export default function LaptopDatails({ setNextSection }) {
             </span>
           </div>
           <select
-            value={localStorage.getItem("laptopBrand") || laptopBrand}
+            value={
+              JSON.parse(localStorage.getItem("laptopBrand"))?.name ||
+              laptopBrand.name
+            }
             onChange={(e) => {
-              let inp = e.target.value;
-              localStorage.setItem("laptopBrand", inp);
-              setLaptopBrand(inp);
+              let brand = {
+                name: e.target.value,
+                id: e.target.options.selectedIndex,
+              };
+              localStorage.setItem("laptopBrand", JSON.stringify(brand));
+              setLaptopBrand(brand);
             }}
           >
             <option value="ლეპტოპის ბრენდი" hidden>
               ლეპტოპის ბრენდი
             </option>
-            <option value="HP">HP</option>
-            <option value="ACER">ACER</option>
-            <option value="LENOVO">LENOVO</option>
-            <option value="MSI">MSI</option>
+            {allBrands?.map((brand) => (
+              <option key={brand.id}>{brand.name}</option>
+            ))}
           </select>
         </div>
         <div className="EmployeeInformation-laptop-details-inner-laptop-details">
@@ -195,9 +265,9 @@ export default function LaptopDatails({ setNextSection }) {
               <option value="CPU" hidden>
                 CPU
               </option>
-              <option value="Intel Core i5">Intel Core i5</option>
-              <option value="Intel Core i7">Intel Core i7</option>
-              <option value="AMD Ryzen 7">AMD Ryzen 7</option>
+              {allCpus?.map((cpu) => (
+                <option key={cpu.id}>{cpu.name}</option>
+              ))}
             </select>
             <div className="EmployeeInformation-laptop-details-inner-laptop-details-about-cpu-core">
               <label htmlFor="core">CPU-ს ბირთვი</label>
@@ -248,31 +318,31 @@ export default function LaptopDatails({ setNextSection }) {
               <div className="EmployeeInformation-laptop-details-inner-laptop-details-about-memory-type-radios">
                 <div>
                   <input
-                    value="ssd"
+                    value="SSD"
                     onChange={(e) => {
                       localStorage.setItem("memoryType", e.target.value);
                       setMemoryType(e.target.value);
                     }}
                     name="memory-type"
-                    id="ssd"
+                    id="SSD"
                     type="radio"
-                    checked={localStorage.getItem("memoryType") === "ssd"}
+                    checked={localStorage.getItem("memoryType") === "SSD"}
                   />
-                  <label htmlFor="ssd">SSD</label>
+                  <label htmlFor="SSD">SSD</label>
                 </div>
                 <div>
                   <input
-                    value="hdd"
+                    value="HDD"
                     onChange={(e) => {
                       localStorage.setItem("memoryType", e.target.value);
                       setMemoryType(e.target.value);
                     }}
                     name="memory-type"
-                    id="hdd"
+                    id="HDD"
                     type="radio"
-                    checked={localStorage.getItem("memoryType") === "hdd"}
+                    checked={localStorage.getItem("memoryType") === "HDD"}
                   />
-                  <label htmlFor="hdd">HDD</label>
+                  <label htmlFor="HDD">HDD</label>
                 </div>
               </div>
             </div>
@@ -339,7 +409,7 @@ export default function LaptopDatails({ setNextSection }) {
             </div>
             <div>
               <input
-                value="secondary"
+                value="used"
                 onChange={(e) => {
                   localStorage.setItem("laptopSituation", e.target.value);
                   setLaptopSituation(e.target.value);
@@ -347,16 +417,16 @@ export default function LaptopDatails({ setNextSection }) {
                 name="new-or-not"
                 id="secondary"
                 type="radio"
-                checked={
-                  localStorage.getItem("laptopSituation") === "secondary"
-                }
+                checked={localStorage.getItem("laptopSituation") === "used"}
               />
               <label htmlFor="secondary">მეორადი</label>
             </div>
           </div>
         </div>
         <div className="EmployeeInformation-laptop-details-inner-buttons">
-          <a onClick={() => setNextSection(false)}>უკან</a>
+          <a href="" onClick={() => setNextSection(false)}>
+            უკან
+          </a>
           <button>დამახსოვრება</button>
         </div>
       </form>

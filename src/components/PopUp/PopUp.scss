@@ -14,9 +14,39 @@
     background-color: white;
     border-radius: 8px;
 
+    @media only screen and (max-width: 390px) {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 100vh;
+        transform: translate(0, 0);
+        border-radius: 0px;
+        justify-content: flex-end;
+        padding: 0 0 80px;
+        gap: 20px 0;
+        z-index: 10;
+    }
+
+    img {
+        @media only screen and (max-width: 390px) {
+            width: 320px;
+            height: 300px;
+            padding-left: 50px;
+        }
+    }
+
     h2 {
         font-weight: 700;
         font-size: 25px;
+
+        @media only screen and (max-width: 390px) {
+            width: 50%;
+            text-align: center;
+            line-height: 40px;
+        }
     }
 
     &-buttons {
@@ -25,20 +55,35 @@
         align-items: center;
         gap: 20px 0;
 
+        @media only screen and (max-width: 390px) {
+            width: 100%;
+            margin-top: 100px;
+        }
+
         button {
             border-radius: 8px;
             outline: none;
             border: none;
             color: white;
             padding: 15px 40px;
-            background-color: #62A1EB;
+            background-color: #62a1eb;
             font-size: 18px;
             cursor: pointer;
+
+            @media only screen and (max-width: 390px) {
+                width: 75%;
+                padding: 20px 40px;
+            }
         }
 
-        a {
+        span {
             cursor: pointer;
-            color: #62A1EB;
+            color: #62a1eb;
+
+            @media only screen and (max-width: 390px) {
+                font-size: 18px;
+                font-weight: 700;
+            }
         }
     }
 }

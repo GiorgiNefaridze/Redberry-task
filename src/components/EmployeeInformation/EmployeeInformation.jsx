@@ -1,21 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { RedberryApi } from "../../api/RedberryApi";
 
 import LaptopDatails from "../LaptopDatails/LaptopDatails";
 
 import GoBack from "../../images/go-back.png";
+import GoBackMobile from "../../images/go-back-mobile.png";
 
 import "./EmployeeInformation.scss";
 
 //validation
 const redberryMailValidation = "redberry.ge";
-const georgianPhoneNumCode = "995";
+const georgianPhoneNumCode = "+995";
 
 export default function EmployeeInformation() {
+  const [teams, setTeams] = useState([]);
+  const [allPositions, setAllPositions] = useState([]);
+
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [direction, setDirection] = useState("");
-  const [position, setPosition] = useState("");
+  const [direction, setDirection] = useState({});
+  const [position, setPosition] = useState({});
   const [email, setEmail] = useState("");
   const [number, setNumber] = useState("");
 
@@ -27,18 +32,37 @@ export default function EmployeeInformation() {
     navigate(-1);
   };
 
+  useEffect(() => {
+    getTeams();
+    getPositions();
+  }, []);
+
+  const getTeams = async () => {
+    const { data } = await RedberryApi.get("/teams").catch((err) =>
+      console.log(err)
+    );
+    setTeams(data.data);
+  };
+
+  const getPositions = async () => {
+    const { data } = await RedberryApi.get("/positions").catch((err) =>
+      console.log(err)
+    );
+    setAllPositions(data.data);
+  };
+
   const submitForm = (e) => {
     e.preventDefault();
 
     if (
-      localStorage.getItem("name") === "" ||
-      localStorage.getItem("name").length < 2 ||
-      localStorage.getItem("lastName") === "" ||
-      localStorage.getItem("lastName").length < 2 ||
-      localStorage.getItem("direction") === null ||
-      localStorage.getItem("position") === null ||
-      localStorage.getItem("email") === "" ||
-      localStorage.getItem("number") === ""
+      !localStorage.getItem("name") ||
+      localStorage.getItem("name")?.length < 2 ||
+      !localStorage.getItem("lastName") ||
+      localStorage.getItem("lastName")?.length < 2 ||
+      !localStorage.getItem("direction") ||
+      !localStorage.getItem("position") ||
+      !localStorage.getItem("email") ||
+      !localStorage.getItem("number")
     )
       return;
 
@@ -48,17 +72,6 @@ export default function EmployeeInformation() {
     if (!localStorage.getItem("number").startsWith(georgianPhoneNumCode)) {
       return;
     }
-
-    const employee = {
-      name: localStorage.getItem("name"),
-      lastName: localStorage.getItem("lastName"),
-      direction: localStorage.getItem("direction"),
-      position: localStorage.getItem("position"),
-      email: localStorage.getItem("email"),
-      number: localStorage.getItem("number"),
-    };
-
-    localStorage.setItem("employee", JSON.stringify(employee));
 
     setNextSection(true);
   };
@@ -73,6 +86,12 @@ export default function EmployeeInformation() {
           ლეპტოპის მახასიათებლები
         </span>
       </div>
+      <div className="EmployeeInformation-toggle-section-mobile">
+        <h3>
+          {!nextSection ? "თანამშრომლის ინფო" : "ლეპტოპის მახასიათებლები"}
+        </h3>
+        <span>{!nextSection ? "1/2" : "2/2"}</span>
+      </div>
       {!nextSection ? (
         <div className="EmployeeInformation-content">
           <form
@@ -85,7 +104,12 @@ export default function EmployeeInformation() {
                 <input
                   value={localStorage.getItem("name") || name}
                   onChange={(e) => {
-                    localStorage.setItem("name", e.target.value);
+                    let inp = e.target.value;
+                    if (!/^[ა-ჰ+]*$/.test(inp)) {
+                      return;
+                    }
+
+                    localStorage.setItem("name", inp);
                     setName(e.target.value);
                   }}
                   id="firstName"
@@ -99,7 +123,12 @@ export default function EmployeeInformation() {
                 <input
                   value={localStorage.getItem("lastName") || lastName}
                   onChange={(e) => {
-                    localStorage.setItem("lastName", e.target.value);
+                    let inp = e.target.value;
+                    if (!/^[ა-ჰ+]*$/.test(inp)) {
+                      return;
+                    }
+
+                    localStorage.setItem("lastName", inp);
                     setLastName(e.target.value);
                   }}
                   id="lastName"
@@ -111,34 +140,48 @@ export default function EmployeeInformation() {
             </div>
             <div className="EmployeeInformation-content-inner-team">
               <select
-                value={localStorage.getItem("direction") || direction}
+                value={
+                  JSON.parse(localStorage.getItem("direction"))?.value ||
+                  direction.value
+                }
                 onChange={(e) => {
-                  localStorage.setItem("direction", e.target.value);
-                  setDirection(e.target.value);
+                  let team = {
+                    value: e.target.value,
+                    id: e.target.options.selectedIndex,
+                  };
+                  localStorage.setItem("direction", JSON.stringify(team));
+                  setDirection(team);
                 }}
               >
                 <option value="თიმი" hidden>
                   თიმი
                 </option>
-                <option value="დეველოპმენტი">დეველოპმენტი</option>
-                <option value="HR">HR</option>
-                <option value="გაყიდვები">გაყიდვები</option>
-                <option value="დიზაინი">დიზაინი</option>
-                <option value="მარკეტინგი">მარკეტინგი</option>
+                {teams?.map((team) => (
+                  <option key={team.id}>{team.name}</option>
+                ))}
               </select>
             </div>
             <div className="EmployeeInformation-content-inner-position">
               <select
-                value={localStorage.getItem("position") || position}
+                value={
+                  JSON.parse(localStorage.getItem("position"))?.value ||
+                  position.value
+                }
                 onChange={(e) => {
-                  localStorage.setItem("position", e.target.value);
-                  setPosition(e.target.value);
+                  let position = {
+                    value: e.target.value,
+                    id: e.target.options.selectedIndex,
+                  };
+                  localStorage.setItem("position", JSON.stringify(position));
+                  setPosition(position);
                 }}
               >
                 <option value="პოზიცია" hidden>
                   პოზიცია
                 </option>
-                <option value="ილუსტრატორი">ილუსტრატორი</option>
+                {allPositions?.map((position) => (
+                  <option key={position.id}>{position.name}</option>
+                ))}
               </select>
             </div>
             <div className="EmployeeInformation-content-inner-mail">
@@ -161,12 +204,16 @@ export default function EmployeeInformation() {
               <input
                 value={localStorage.getItem("number") || number}
                 onChange={(e) => {
+                  if (!/^[0-9++ ]*$/.test(e.target.value)) {
+                    return;
+                  }
                   localStorage.setItem("number", e.target.value);
                   setNumber(e.target.value);
                 }}
                 id="number"
-                type="number"
+                type="text"
                 placeholder="+995 598 00 07 01"
+                required
               />
               <span>უნდა აკმაყოფილებდეს ქართული მობ-ნომრის ფორმატს</span>
             </div>
@@ -183,6 +230,14 @@ export default function EmployeeInformation() {
         className="EmployeeInformation-go-back"
         title="უკან დაბრუნება"
         src={GoBack}
+        alt="go-back"
+      />
+      <img
+        onClick={() => goBack()}
+        className="EmployeeInformation-go-back-mobile"
+        title="უკან დაბრუნება"
+        src={GoBackMobile}
+        alt="go-back"
       />
     </div>
   );

@@ -6,6 +6,11 @@
     align-items: center;
     justify-content: center;
 
+    @media only screen and (max-width: 390px) {
+        width: 100%;
+        padding-inline: 30px;
+    }
+
     &-inner {
         width: 70%;
         height: 100%;
@@ -13,6 +18,15 @@
         flex-direction: column;
         justify-content: space-between;
         padding-block: 40px;
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        @media only screen and (max-width: 390px) {
+            width: 100%;
+            gap: 35px 0;
+        }
 
         &-img-upload-section {
             width: 750px;
@@ -25,13 +39,18 @@
             align-items: center;
             gap: 50px 0;
 
+            @media only screen and (max-width: 390px) {
+                width: 100%;
+                flex-direction: column-reverse;
+                padding: 25px;
+            }
+
             &.error {
                 border: 2px dashed red;
             }
 
             &.success {
                 border: 2px dashed rgb(53, 168, 53);
-
             }
 
             span {
@@ -43,9 +62,23 @@
                 text-align: center;
                 cursor: pointer;
 
+                @media only screen and (max-width: 390px) {
+                    display: none;
+                }
+
                 &.error {
                     color: #e52f2f;
                     font-weight: 700;
+                }
+
+                &.upload-image-mobile {
+                    display: none;
+
+                    @media only screen and (max-width: 390px) {
+                        display: block;
+                        width: 70%;
+                        font-size: 17px;
+                    }
                 }
             }
 
@@ -67,6 +100,27 @@
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
+
+                @media only screen and (max-width: 390px) {
+                    display: none;
+                }
+
+                &.upload-image-mob {
+                    display: none;
+
+                    @media only screen and (max-width: 390px) {
+                        display: block;
+                        background-color: transparent !important;
+                        border-radius: 8px;
+                        color: white;
+                        font-weight: 500;
+                        font-size: 18px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        cursor: pointer;
+                    }
+                }
             }
         }
 
@@ -77,12 +131,21 @@
             align-items: center;
             justify-content: space-between;
 
+            @media only screen and (max-width: 390px) {
+                flex-direction: column;
+                gap: 20px 0;
+            }
+
             &-input {
                 width: 50%;
                 display: flex;
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 15px 0;
+
+                @media only screen and (max-width: 390px) {
+                    width: 100%;
+                }
 
                 label {
                     font-size: 19px;
@@ -100,6 +163,10 @@
 
                 span {
                     color: #2e2e2e;
+
+                    @media only screen and (max-width: 390px) {
+                        font-size: 13px;
+                    }
                 }
             }
 
@@ -114,6 +181,11 @@
                 font-weight: 700;
                 padding: 12px 10px;
                 cursor: pointer;
+
+                @media only screen and (max-width: 390px) {
+                    width: 100%;
+                    padding: 15px 0px;
+                }
             }
         }
 
@@ -125,7 +197,7 @@
             display: flex;
             flex-direction: column;
             gap: 30px 0;
-            padding-block: 50px;
+            padding-block: 30px;
 
             &-about-cpu {
                 width: 100%;
@@ -133,6 +205,11 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
+
+                @media only screen and (max-width: 390px) {
+                    flex-direction: column;
+                    gap: 20px 0;
+                }
 
                 select {
                     width: 35%;
@@ -144,6 +221,11 @@
                     font-weight: 700;
                     padding: 12px 10px;
                     cursor: pointer;
+
+                    @media only screen and (max-width: 390px) {
+                        width: 100%;
+                        padding: 15px 0px;
+                    }
                 }
 
                 select,
@@ -154,6 +236,10 @@
                     flex-direction: column;
                     align-items: flex-start;
                     gap: 10px 0;
+
+                    @media only screen and (max-width: 390px) {
+                        width: 100%;
+                    }
                 }
 
                 &-core,
@@ -190,12 +276,21 @@
                 align-items: center;
                 justify-content: space-between;
 
+                @media only screen and (max-width: 390px) {
+                    flex-direction: column;
+                    gap: 20px 0;
+                }
+
                 &-input {
                     width: 44%;
                     display: flex;
                     flex-direction: column;
                     align-items: flex-start;
                     gap: 12px 0;
+
+                    @media only screen and (max-width: 390px) {
+                        width: 100%;
+                    }
 
                     label {
                         font-size: 19px;
@@ -230,6 +325,10 @@
                     justify-content: flex-start;
                     gap: 20px 0;
 
+                    @media only screen and (max-width: 390px) {
+                        width: 100%;
+                    }
+
                     label {
                         font-size: 19px;
                         font-weight: 700;
@@ -257,6 +356,11 @@
             align-items: flex-start;
             justify-content: space-between;
 
+            @media only screen and (max-width: 390px) {
+                flex-direction: column;
+                gap: 20px 0;
+            }
+
             &-date,
             &-laptop-price {
                 width: 45%;
@@ -265,6 +369,10 @@
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 15px 0;
+
+                @media only screen and (max-width: 390px) {
+                    width: 100%;
+                }
 
                 label {
                     font-weight: 700;
@@ -331,8 +439,6 @@
                     display: flex;
                     align-items: center;
                     gap: 0 12px;
-
-
                 }
             }
         }
@@ -343,10 +449,15 @@
             align-items: center;
             justify-content: space-between;
 
+            @media only screen and (max-width: 390px) {
+                padding: 10px 5px;
+            }
+
             a {
                 color: #62a1eb;
                 font-size: 18px;
                 font-weight: 700;
+                text-decoration: none;
                 cursor: pointer;
             }
 
