@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { RedberryApi } from "../../api/RedberryApi";
 
@@ -13,7 +13,7 @@ import "./EmployeeInformation.scss";
 const redberryMailValidation = "redberry.ge";
 const georgianPhoneNumCode = "+995";
 
-export default function EmployeeInformation() {
+const EmployeeInformation = () => {
   const [teams, setTeams] = useState([]);
   const [allPositions, setAllPositions] = useState([]);
 
@@ -25,6 +25,11 @@ export default function EmployeeInformation() {
   const [number, setNumber] = useState("");
 
   const [nextSection, setNextSection] = useState(false);
+
+  const inputNameRef = useRef();
+  const inputLastNameRef = useRef();
+  const inputEmailRef = useRef();
+  const inputPhoneNumberRef = useRef();
 
   const navigate = useNavigate();
 
@@ -38,16 +43,12 @@ export default function EmployeeInformation() {
   }, []);
 
   const getTeams = async () => {
-    const { data } = await RedberryApi.get("/teams").catch((err) =>
-      console.log(err)
-    );
+    const { data } = await RedberryApi.get("/teams");
     setTeams(data.data);
   };
 
   const getPositions = async () => {
-    const { data } = await RedberryApi.get("/positions").catch((err) =>
-      console.log(err)
-    );
+    const { data } = await RedberryApi.get("/positions");
     setAllPositions(data.data);
   };
 
@@ -56,22 +57,64 @@ export default function EmployeeInformation() {
 
     if (
       !localStorage.getItem("name") ||
-      localStorage.getItem("name")?.length < 2 ||
-      !localStorage.getItem("lastName") ||
-      localStorage.getItem("lastName")?.length < 2 ||
-      !localStorage.getItem("direction") ||
-      !localStorage.getItem("position") ||
-      !localStorage.getItem("email") ||
-      !localStorage.getItem("number")
-    )
+      localStorage.getItem("name")?.length < 2
+    ) {
+      inputNameRef.current.children[0].style.color = "red";
+      inputNameRef.current.children[1].style.border = "1.8px solid red";
+      inputNameRef.current.children[2].style.color = "red";
       return;
-
-    if (localStorage.getItem("email").split("@")[1] !== redberryMailValidation)
-      return;
-
-    if (!localStorage.getItem("number").startsWith(georgianPhoneNumCode)) {
-      return;
+    } else {
+      inputNameRef.current.children[0].style.color = "black";
+      inputNameRef.current.children[1].style.border = "1.8px solid #8ac0e2";
+      inputNameRef.current.children[2].style.color = "black";
     }
+
+    if (
+      !localStorage.getItem("lastName") ||
+      localStorage.getItem("lastName")?.length < 2
+    ) {
+      inputLastNameRef.current.children[0].style.color = "red";
+      inputLastNameRef.current.children[1].style.border = "1.8px solid red";
+      inputLastNameRef.current.children[2].style.color = "red";
+      return;
+    } else {
+      inputLastNameRef.current.children[0].style.color = "black";
+      inputLastNameRef.current.children[1].style.border = "1.8px solid #8ac0e2";
+      inputLastNameRef.current.children[2].style.color = "black";
+    }
+
+    if (
+      !localStorage.getItem("email") ||
+      localStorage.getItem("email").split("@")[1] !== redberryMailValidation
+    ) {
+      inputEmailRef.current.children[0].style.color = "red";
+      inputEmailRef.current.children[1].style.border = "1.8px solid red";
+      inputEmailRef.current.children[2].style.color = "red";
+      return;
+    } else {
+      inputEmailRef.current.children[0].style.color = "black";
+      inputEmailRef.current.children[1].style.border = "1.8px solid #8ac0e2";
+      inputEmailRef.current.children[2].style.color = "black";
+    }
+
+    if (
+      !localStorage.getItem("number") ||
+      localStorage.getItem("number").length > 13 ||
+      !localStorage.getItem("number").startsWith(georgianPhoneNumCode)
+    ) {
+      inputPhoneNumberRef.current.children[0].style.color = "red";
+      inputPhoneNumberRef.current.children[1].style.border = "1.8px solid red";
+      inputPhoneNumberRef.current.children[2].style.color = "red";
+      return;
+    } else {
+      inputPhoneNumberRef.current.children[0].style.color = "black";
+      inputPhoneNumberRef.current.children[1].style.border =
+        "1.8px solid #8ac0e2";
+      inputPhoneNumberRef.current.children[2].style.color = "black";
+    }
+
+    if (!localStorage.getItem("direction") || !localStorage.getItem("position"))
+      return;
 
     setNextSection(true);
   };
@@ -99,7 +142,10 @@ export default function EmployeeInformation() {
             className="EmployeeInformation-content-inner"
           >
             <div className="EmployeeInformation-content-inner-firstName-lastName">
-              <div className="EmployeeInformation-content-inner-firstName-lastName-firstName">
+              <div
+                ref={inputNameRef}
+                className="EmployeeInformation-content-inner-firstName-lastName-firstName"
+              >
                 <label htmlFor="firstName">სახელი</label>
                 <input
                   value={localStorage.getItem("name") || name}
@@ -118,7 +164,10 @@ export default function EmployeeInformation() {
                 />
                 <span>მინიმუმ 2 სიმბოლო, ქართული ასოები</span>
               </div>
-              <div className="EmployeeInformation-content-inner-firstName-lastName-lastName">
+              <div
+                ref={inputLastNameRef}
+                className="EmployeeInformation-content-inner-firstName-lastName-lastName"
+              >
                 <label htmlFor="lastName">გვარი</label>
                 <input
                   value={localStorage.getItem("lastName") || lastName}
@@ -184,7 +233,10 @@ export default function EmployeeInformation() {
                 ))}
               </select>
             </div>
-            <div className="EmployeeInformation-content-inner-mail">
+            <div
+              ref={inputEmailRef}
+              className="EmployeeInformation-content-inner-mail"
+            >
               <label htmlFor="mail">მეილი</label>
               <input
                 id="mail"
@@ -195,11 +247,13 @@ export default function EmployeeInformation() {
                 }}
                 type="email"
                 placeholder="yourmail@redberry.ge"
-                required
               />
               <span>უნდა მთავრდებოდეს @redberry.ge-ით</span>
             </div>
-            <div className="EmployeeInformation-content-inner-phone-number">
+            <div
+              ref={inputPhoneNumberRef}
+              className="EmployeeInformation-content-inner-phone-number"
+            >
               <label htmlFor="number">ტელეფონის ნომერი</label>
               <input
                 value={localStorage.getItem("number") || number}
@@ -241,4 +295,6 @@ export default function EmployeeInformation() {
       />
     </div>
   );
-}
+};
+
+export default EmployeeInformation;

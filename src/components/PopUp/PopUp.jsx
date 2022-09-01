@@ -24,12 +24,12 @@ const keys = [
   "memoryType",
 ];
 
-export default function PopUp() {
+const PopUp = () => {
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   keys.forEach((key) => localStorage.removeItem(key));
-  // }, []);
+  useEffect(() => {
+    keys.forEach((key) => localStorage.removeItem(key));
+  }, []);
 
   return (
     <div className="popup">
@@ -44,3 +44,5 @@ export default function PopUp() {
     </div>
   );
 }
+
+export default PopUp

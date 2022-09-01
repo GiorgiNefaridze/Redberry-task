@@ -7,7 +7,7 @@ import PopUp from "../PopUp/PopUp";
 
 import "./LaptopDatails.scss";
 
-export default function LaptopDatails({ setNextSection }) {
+const LaptopDatails = ({ setNextSection }) => {
   const [allBrands, setAllBrands] = useState([]);
   const [allCpus, setAllCpus] = useState([]);
 
@@ -22,10 +22,10 @@ export default function LaptopDatails({ setNextSection }) {
   const [cpuCore, setCpuCore] = useState("");
   const [cpuStream, setCpuStream] = useState("");
   const [laptopRam, setLaptopRam] = useState("");
-  const [memoryType, setMemoryType] = useState("");
   const [date, setDate] = useState("");
   const [price, setPrice] = useState("");
-  const [laptopSituation, setLaptopSituation] = useState("");
+  const setLaptopState = useState("")[1];
+  const setMemoryType = useState("")[1];
 
   const inputRef = useRef();
   const laptopNameValidationRef = useRef();
@@ -38,16 +38,12 @@ export default function LaptopDatails({ setNextSection }) {
   }, []);
 
   const getBrands = async () => {
-    const { data } = await RedberryApi.get("/brands").catch((err) =>
-      console.log(err)
-    );
+    const { data } = await RedberryApi.get("/brands");
     setAllBrands(data.data);
   };
 
   const getCpus = async () => {
-    const { data } = await RedberryApi.get("cpus").catch((err) =>
-      console.log(err)
-    );
+    const { data } = await RedberryApi.get("/cpus");
     setAllCpus(data.data);
   };
 
@@ -92,7 +88,7 @@ export default function LaptopDatails({ setNextSection }) {
       position_id: JSON.parse(localStorage.getItem("position")).id,
       phone_number: localStorage.getItem("number"),
       email: localStorage.getItem("email"),
-      token: "56894b83e0d3b7a61ffc0e261560a53e",
+      token: "3f89eec14265588c88a36edf0442f862",
 
       laptop_name: localStorage.getItem("laptopName"),
       laptop_image: image,
@@ -107,19 +103,17 @@ export default function LaptopDatails({ setNextSection }) {
       laptop_price: Number(localStorage.getItem("price")),
     };
 
-    console.log(employeeSet)
-
     const form = new FormData();
 
     for (let key in employeeSet) {
       form.append(key, employeeSet[key]);
     }
 
-    // const response = await RedberryApi.post("/laptop/create", form);
+    const response = await RedberryApi.post("/laptop/create", form);
 
-    // if (response) {
-    //   setShowPopUp(true);
-    // }
+    if (response) {
+      setShowPopUp(true);
+    }
   };
 
   const uploadImage = (e) => {
@@ -397,7 +391,7 @@ export default function LaptopDatails({ setNextSection }) {
                 value="new"
                 onChange={(e) => {
                   localStorage.setItem("laptopSituation", e.target.value);
-                  setLaptopSituation(e.target.value);
+                  setLaptopState(e.target.value);
                 }}
                 name="new-or-not"
                 id="brand-new"
@@ -411,25 +405,25 @@ export default function LaptopDatails({ setNextSection }) {
                 value="used"
                 onChange={(e) => {
                   localStorage.setItem("laptopSituation", e.target.value);
-                  setLaptopSituation(e.target.value);
+                  setLaptopState(e.target.value);
                 }}
                 name="new-or-not"
-                id="secondary"
+                id="used"
                 type="radio"
                 checked={localStorage.getItem("laptopSituation") === "used"}
               />
-              <label htmlFor="secondary">მეორადი</label>
+              <label htmlFor="used">მეორადი</label>
             </div>
           </div>
         </div>
         <div className="EmployeeInformation-laptop-details-inner-buttons">
-          <a href="" onClick={() => setNextSection(false)}>
-            უკან
-          </a>
+          <span onClick={() => setNextSection(false)}>უკან</span>
           <button>დამახსოვრება</button>
         </div>
       </form>
       {showPopUp && <PopUp />}
     </div>
   );
-}
+};
+
+export default LaptopDatails;

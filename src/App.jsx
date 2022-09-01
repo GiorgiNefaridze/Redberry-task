@@ -7,7 +7,7 @@ import EachEmployeeWholeSection from "./components/EachEmployeeWholeSection/Each
 
 import "./App.scss";
 
-function App() {
+const App = () => {
   return (
     <Router>
       <Routes>
@@ -18,6 +18,6 @@ function App() {
       </Routes>
     </Router>
   );
-}
+};
 
 export default App;

@@ -9,23 +9,23 @@ import "./EachEmployeeWholeSection.scss";
 
 const apiAddress = "https://pcfy.redberryinternship.ge/";
 
-export default function EachEmployeeWholeSection() {
+const EachEmployeeWholeSection = () => {
   const [laptopInfo, setLaptopInfo] = useState();
 
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
+    const getLaptopDetails = async () => {
+      const { data } = await RedberryApi.get(
+        `/laptop/${location.state.id}?token=3f89eec14265588c88a36edf0442f862`
+      );
+  
+      setLaptopInfo(data.data);
+    };
+    
     getLaptopDetails();
   }, [location]);
-
-  const getLaptopDetails = async () => {
-    const { data } = await RedberryApi.get(
-      `/laptop/${location.state.id}?token=56894b83e0d3b7a61ffc0e261560a53e`
-    );
-
-    setLaptopInfo(data.data);
-  };
 
   return (
     <div className="each-employee-whole-section">
@@ -35,19 +35,21 @@ export default function EachEmployeeWholeSection() {
           onClick={() => navigate(-1)}
           title="უკან დაბრუნება"
           src={GoBack}
+          alt="go-back"
         />
         <img
           className="each-employee-whole-section-header-go-back-mob"
           onClick={() => navigate(-1)}
           title="უკან დაბრუნება"
           src={GoBackMobile}
+          alt="go-back"
         />
         <h2>ᲚᲔᲞᲢᲝᲞᲘᲡ ᲘᲜᲤᲝ</h2>
       </div>
       <div className="each-employee-whole-section-content">
         <div className="each-employee-whole-section-content-employee-details">
           <div className="each-employee-whole-section-content-employee-details-image">
-            <img src={apiAddress + laptopInfo?.laptop.image} />
+            <img src={apiAddress + laptopInfo?.laptop?.image} alt="laptop" />
           </div>
           <div className="each-employee-whole-section-content-employee-details-inner">
             <div>
@@ -114,7 +116,9 @@ export default function EachEmployeeWholeSection() {
             </div>
             <div>
               <p>ლეპტოპის ფასი:</p>
-              <span>{laptopInfo?.laptop?.price}</span>
+              <span>
+                {laptopInfo?.laptop?.price || "თარიღი არ არის მითითებული"}
+              </span>
             </div>
           </div>
           <div>
@@ -127,4 +131,6 @@ export default function EachEmployeeWholeSection() {
       </div>
     </div>
   );
-}
+};
+
+export default EachEmployeeWholeSection;

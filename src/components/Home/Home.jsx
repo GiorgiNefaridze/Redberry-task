@@ -6,7 +6,7 @@ import HomeMobileLogo from "../../images/home-mobile.png";
 
 import "./Home.scss";
 
-export default function Home() {
+const Home = () => {
   const navigate = useNavigate();
 
   return (
@@ -31,3 +31,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default Home
