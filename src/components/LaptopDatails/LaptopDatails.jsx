@@ -13,7 +13,7 @@ export default function LaptopDatails({ setNextSection }) {
 
   const [uploaded, setUploaded] = useState(false);
   const [uploadError, setUploadError] = useState(false);
-  const [base64Format, setBase64Format] = useState("");
+  const [image, setImage] = useState();
   const [showPopUp, setShowPopUp] = useState(false);
 
   const [laptopName, setLaptopName] = useState("");
@@ -54,7 +54,7 @@ export default function LaptopDatails({ setNextSection }) {
   const submitLaptopDetailSection = async (e) => {
     e.preventDefault();
 
-    if (!base64Format) {
+    if (!image) {
       setUploadError(true);
       return;
     }
@@ -95,7 +95,7 @@ export default function LaptopDatails({ setNextSection }) {
       token: "56894b83e0d3b7a61ffc0e261560a53e",
 
       laptop_name: localStorage.getItem("laptopName"),
-      laptop_image: base64Format,
+      laptop_image: image,
       laptop_brand_id: JSON.parse(localStorage.getItem("laptopBrand")).id,
       laptop_cpu: localStorage.getItem("cpu"),
       laptop_cpu_cores: Number(localStorage.getItem("cpuCore")),
@@ -107,24 +107,23 @@ export default function LaptopDatails({ setNextSection }) {
       laptop_price: Number(localStorage.getItem("price")),
     };
 
-    console.log(employeeSet);
+    console.log(employeeSet)
 
-    const response = await RedberryApi.post("/laptop/create", employeeSet);
+    const form = new FormData();
 
-    console.log(response);
+    for (let key in employeeSet) {
+      form.append(key, employeeSet[key]);
+    }
 
-    setShowPopUp(true);
+    // const response = await RedberryApi.post("/laptop/create", form);
+
+    // if (response) {
+    //   setShowPopUp(true);
+    // }
   };
 
   const uploadImage = (e) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(e.target.files[0]);
-    console.log(e.target.files[0].name);
-    setBase64Format(e.target.files[0].name);
-    // reader.onload = function (e) {
-    //   setBase64Format(reader.result);
-    //   setUploaded(true);
-    // };
+    setImage(e.target.files[0]);
     setUploaded(true);
   };
 
