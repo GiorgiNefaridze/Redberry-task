@@ -28,6 +28,8 @@ const EmployeeInformation = () => {
 
   const inputNameRef = useRef();
   const inputLastNameRef = useRef();
+  const selectTeamRef = useRef();
+  const selectPositionRef = useRef();
   const inputEmailRef = useRef();
   const inputPhoneNumberRef = useRef();
 
@@ -39,18 +41,31 @@ const EmployeeInformation = () => {
 
   useEffect(() => {
     getTeams();
-    getPositions();
   }, []);
 
   const getTeams = async () => {
     const { data } = await RedberryApi.get("/teams");
+
     setTeams(data.data);
   };
 
-  const getPositions = async () => {
-    const { data } = await RedberryApi.get("/positions");
-    setAllPositions(data.data);
-  };
+  useEffect(() => {
+    if (teams.length >= 1) {
+      const getPositions = async () => {
+        const { data } = await RedberryApi.get("/positions");
+        
+        if(localStorage.getItem("direction")){
+          const changedPosition = data.data.filter(eachPosition => eachPosition.team_id === JSON.parse(localStorage.getItem("direction")).id)
+          setAllPositions(changedPosition);
+        }else{
+          setAllPositions(data.data);
+        }
+
+      };
+
+      getPositions();
+    }
+  }, [teams, direction]);
 
   const submitForm = (e) => {
     e.preventDefault();
@@ -187,7 +202,10 @@ const EmployeeInformation = () => {
                 <span>მინიმუმ 2 სიმბოლო, ქართული ასოები</span>
               </div>
             </div>
-            <div className="EmployeeInformation-content-inner-team">
+            <div
+              ref={selectTeamRef}
+              className="EmployeeInformation-content-inner-team"
+            >
               <select
                 value={
                   JSON.parse(localStorage.getItem("direction"))?.value ||
@@ -210,7 +228,10 @@ const EmployeeInformation = () => {
                 ))}
               </select>
             </div>
-            <div className="EmployeeInformation-content-inner-position">
+            <div
+              ref={selectPositionRef}
+              className="EmployeeInformation-content-inner-position"
+            >
               <select
                 value={
                   JSON.parse(localStorage.getItem("position"))?.value ||
@@ -267,7 +288,6 @@ const EmployeeInformation = () => {
                 id="number"
                 type="text"
                 placeholder="+995 598 00 07 01"
-                required
               />
               <span>უნდა აკმაყოფილებდეს ქართული მობ-ნომრის ფორმატს</span>
             </div>

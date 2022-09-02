@@ -117,7 +117,8 @@ const LaptopDatails = ({ setNextSection }) => {
   };
 
   const uploadImage = (e) => {
-    setImage(e.target.files[0]);
+    const { files } = e.target;
+    setImage(files[0]);
     setUploaded(true);
   };
 

@@ -117,14 +117,14 @@ const EachEmployeeWholeSection = () => {
             <div>
               <p>ლეპტოპის ფასი:</p>
               <span>
-                {laptopInfo?.laptop?.price || "თარიღი არ არის მითითებული"}
+                {laptopInfo?.laptop?.price}
               </span>
             </div>
           </div>
           <div>
             <div>
               <p>შევსების რიცხვი:</p>
-              <span>{laptopInfo?.laptop?.purchase_date}</span>
+              <span>{laptopInfo?.laptop?.purchase_date || "თარიღი არ არის მითითებული"}</span>
             </div>
           </div>
         </div>
