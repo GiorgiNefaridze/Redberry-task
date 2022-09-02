@@ -1,0 +1,163 @@
+.ListOfAddedLaptops {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 70px 0;
+    padding-bottom: 150px;
+
+    &-header {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: 40px;
+        position: relative;
+
+        @media only screen and (max-width:390px) {
+            margin-top: 20px;
+
+        }
+
+        img {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            left: 40px;
+            top: 0px;
+            cursor: pointer;
+
+            @media only screen and (max-width:390px) {
+                display: none;
+            }
+
+            &.ListOfAddedLaptops-header-mobile-go-back {
+                display: none;
+
+                @media only screen and (max-width:390px) {
+                    display: block;
+                    width: 12px;
+                    height: 16px;
+                    display: block;
+                    top: 50%;
+                    transform: translateY(-50%);
+                }
+            }
+        }
+
+        h1 {
+            @media only screen and (max-width:390px) {
+                font-size: 20px;
+            }
+        }
+    }
+
+    &-content {
+        width: 70%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 40px 0;
+
+        @media only screen and (max-width:390px) {
+            width: 85%;
+        }
+
+        &-laptop-wrapper {
+            width: 40%;
+            height: 230px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #AED1EA;
+            border-radius: 30px;
+            overflow: hidden;
+
+            @media only screen and (max-width:390px) {
+                width: 100%;
+                height: 190px;
+                background-color: #EAFAFF;
+            }
+
+
+            &-block {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: space-between;
+                border-radius: 30px;
+                overflow: hidden;
+
+                &-img-section {
+                    width: 50%;
+                    height: 100%;
+
+                    img {
+                        border-radius: 6px;
+                        width: 100%;
+                        height: 100%;
+                    }
+                }
+
+                &-content-section {
+                    width: 50%;
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    justify-content: flex-start;
+                    padding: 30px 25px;
+                    gap: 12px 0;
+                    font-family: "Helvetica Neue";
+                    font-size: 18px;
+                    font-weight: 500;
+
+                    span {
+                        text-decoration: underline;
+                        color: #4386A9;
+                        cursor: pointer;
+                    }
+
+                    h2,
+                    span {
+                        @media only screen and (max-width:390px) {
+                            font-sizE: 14px;
+                        }
+                    }
+
+                    h4 {
+                        @media only screen and (max-width:390px) {
+                            font-size: 15px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    &-empty-section {
+        width: 100%;
+        margin-top: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 50px 0;
+
+        img {
+            width: 300px;
+
+            @media only screen and (max-width:390px) {
+                width: 180px;
+            }
+        }
+
+        h1 {
+            font-size: 35px;
+            font-family: 'Helvetica Neue';
+
+            @media only screen and (max-width:390px) {
+                font-size: 25px;
+            }
+        }
+    }
+}
